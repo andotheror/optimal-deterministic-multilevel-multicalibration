@@ -40,22 +40,14 @@
 \maketitle
 
 \begin{abstract}
-Multilevel multicalibration asks one predictor to calibrate a sequence of dependent distributional properties, such as a mean followed by a variance and a skewness. A recent sharp characterization gives sample complexity $\widetilde\Theta(\varepsilon^{-(k+2)})$ for $k$ levels, but its optimal upper bound outputs a randomized predictor. This leaves open whether the randomization gap, recently closed for scalar mean multicalibration, returns when calibration conditions jointly bucket a vector prediction. We prove that it does not. Under exactly the regularity conditions of the randomized theorem, a learner outputs a deterministic predictor using
-\[
-\widetilde O\!\left(\frac{\varepsilon^{-k}+\log |\mathcal G|}{\varepsilon^2}\right)
-\]
-samples. The rate matches the lower bound for randomized predictors up to logarithmic factors. The proof requires more than applying scalar derandomization coordinatewise. We learn confidence sets for entire conditional outcome laws using only their finite grid-residual vectors, restrict the randomized learner to actions compatible with those sets, and purify its output using one shared seed per data-dependent context cell. A singleton support rule on accurately learned atoms removes a grid-scale variance floor that would otherwise overwhelm the exponentially many signed calibration tests. The theorem applies to every bounded sequentially conditionally identifiable property covered by the randomized theory, including mean and mean absolute deviation, mean, variance, and skewness, and quantile and conditional value at risk.
+Multilevel multicalibration asks one predictor to calibrate a sequence of dependent distributional properties, such as a mean followed by a variance and a skewness. A recent sharp characterization gives sample complexity $\widetilde\Theta(\varepsilon^{-(k+2)})$ for $k$ levels, but its optimal upper bound outputs a randomized predictor. This leaves open whether the randomization gap, recently closed for scalar mean multicalibration, returns when calibration conditions jointly bucket a vector prediction. We prove that it does not. Under exactly the regularity conditions of the randomized theorem, a learner outputs a deterministic predictor using \[ \widetilde O\!\left(\frac{\varepsilon^{-k}+\log |\mathcal G|}{\varepsilon^2}\right) \] samples. The rate matches the lower bound for randomized predictors up to logarithmic factors. The proof requires more than applying scalar derandomization coordinatewise. We learn confidence sets for entire conditional outcome laws using only their finite grid-residual vectors, restrict the randomized learner to actions compatible with those sets, and purify its output using one shared seed per data-dependent context cell. A singleton support rule on accurately learned atoms removes a grid-scale variance floor that would otherwise overwhelm the exponentially many signed calibration tests. The theorem applies to every bounded sequentially conditionally identifiable property covered by the randomized theory, including mean and mean absolute deviation, mean, variance, and skewness, and quantile and conditional value at risk.
 \end{abstract}
 
 \section{Introduction}
 
 Calibration makes numerical predictions interpretable. A scalar probability predictor is calibrated when its residual is unbiased after conditioning on the prediction. Multicalibration requires the same guarantee after reweighting by every group in a supplied family \citep{hebertjohnson2018multicalibration}. It has become a basic tool for subgroup guarantees, trustworthy prediction, and downstream decision making \citep{noarovroth2023scope,gopalan2022omnipredictors}.
 
-Many useful forecasts are not scalar. Variance is defined relative to a mean, skewness is defined relative to both a mean and a variance, and conditional value at risk is naturally paired with a quantile. \citet{lu2026multilevel} formalize these tasks through \emph{sequentially conditionally identifiable} properties. A $k$-level property has residuals $R_1,\ldots,R_k$, where the $j$th residual identifies the $j$th property after the earlier properties are fixed. They study a strong expected calibration error that buckets by the full prediction vector and sums the residual mass over all coordinates. For polynomial-size group families, they prove a sharp sample-complexity law
-\[
-\widetilde\Theta(\varepsilon^{-(k+2)}).
-\]
-Their lower bound applies to arbitrary learners and possibly randomized predictions. Their upper bound is obtained by an online-to-batch reduction and outputs, at each context, a distribution over a $k$-dimensional grid.
+Many useful forecasts are not scalar. Variance is defined relative to a mean, skewness is defined relative to both a mean and a variance, and conditional value at risk is naturally paired with a quantile. \citet{lu2026multilevel} formalize these tasks through \emph{sequentially conditionally identifiable} properties. A $k$-level property has residuals $R_1,\ldots,R_k$, where the $j$th residual identifies the $j$th property after the earlier properties are fixed. They study a strong expected calibration error that buckets by the full prediction vector and sums the residual mass over all coordinates. For polynomial-size group families, they prove a sharp sample-complexity law \[ \widetilde\Theta(\varepsilon^{-(k+2)}). \] Their lower bound applies to arbitrary learners and possibly randomized predictions. Their upper bound is obtained by an online-to-batch reduction and outputs, at each context, a distribution over a $k$-dimensional grid.
 
 Prediction-time randomization is a real distinction. It can assign different forecasts to identical individuals, complicates auditing and reproducibility, and changes which prediction buckets receive an individual. For scalar mean ECE multicalibration, all optimal algorithms were randomized until \citet{noarovroth2026deterministic} gave a deterministic-output learner at the minimax $\widetilde O(\varepsilon^{-3})$ rate. Their result does not directly apply to multilevel properties. A scalar conditional mean has an interval confidence set and residual $p-\mu(x)$. A multilevel residual depends on an entire conditional outcome law and on a jointly bucketed vector prediction. Coordinatewise confidence intervals need not describe a feasible joint property vector, and coordinatewise purification does not preserve full-vector buckets.
 
@@ -77,8 +69,7 @@ We next partition the contexts not seen in the confidence sample into finitely m
 
 \begin{table}[t]
 \centering
-\small
-\setlength{\tabcolsep}{5pt}
+\small \setlength{\tabcolsep}{5pt}
 \begin{tabular}{@{}lccc@{}}
 \toprule
 Result & Property & Output & Samples for polynomial $|\cG|$ \\
@@ -95,40 +86,23 @@ This work & $k$ levels & deterministic & $\widetilde O(\varepsilon^{-(k+2)})$ \\
 
 \section{Setup}
 
-Let $\mathcal Y$ be a standard Borel outcome space, let $\cM$ be a class of probability laws on $\mathcal Y$, and let $\cP=P_1\times\cdots\times P_k\subset\mathbb R^k$ be compact. A $k$-level property $\Gamma=(\Gamma_1,\ldots,\Gamma_k):\cM\to\cP$ is sequentially conditionally identifiable if there are residuals
-\[
-R_j:P_1\times\cdots\times P_j\times\mathcal Y\to\mathbb R
-\]
-such that, for every $\mu\in\cM$, the equation $\E_\mu R_j(\Gamma_{<j}(\mu),q,Y)=0$ holds exactly when $q=\Gamma_j(\mu)$. Write $R(p,y)=(R_1(p_1,y),\ldots,R_k(p_{\le k},y))$ and $\bar R(p,\mu)=\E_\mu R(p,Y)$. In particular, $\bar R(\Gamma(\mu),\mu)=0$. This is the framework of \citet{lu2026multilevel}.
+Let $\mathcal Y$ be a standard Borel outcome space, let $\cM$ be a class of probability laws on $\mathcal Y$, and let $\cP=P_1\times\cdots\times P_k\subset\mathbb R^k$ be compact. A $k$-level property $\Gamma=(\Gamma_1,\ldots,\Gamma_k):\cM\to\cP$ is sequentially conditionally identifiable if there are residuals \[ R_j:P_1\times\cdots\times P_j\times\mathcal Y\to\mathbb R \] such that, for every $\mu\in\cM$, the equation $\E_\mu R_j(\Gamma_{<j}(\mu),q,Y)=0$ holds exactly when $q=\Gamma_j(\mu)$. Write $R(p,y)=(R_1(p_1,y),\ldots,R_k(p_{\le k},y))$ and $\bar R(p,\mu)=\E_\mu R(p,Y)$. In particular, $\bar R(\Gamma(\mu),\mu)=0$. This is the framework of \citet{lu2026multilevel}.
 
-Let $X$ be a standard Borel context space and let $D$ be a distribution on $X\times\mathcal Y$. We assume its regular conditional laws $\mu_x=D_{Y\mid X=x}$ belong to $\cM$ almost surely. A randomized finite-grid predictor is a measurable map $Q:X\to\simplex(S)$ for a finite $S\subset\cP$. For a group $g:X\to[0,1]$, define
-\[
-B_{g,p,j}(Q)=\E_D[g(X)Q_X(p)R_j(p,Y)]
-\]
-and
+Let $X$ be a standard Borel context space and let $D$ be a distribution on $X\times\mathcal Y$. We assume its regular conditional laws $\mu_x=D_{Y\mid X=x}$ belong to $\cM$ almost surely. A randomized finite-grid predictor is a measurable map $Q:X\to\simplex(S)$ for a finite $S\subset\cP$. For a group $g:X\to[0,1]$, define \[ B_{g,p,j}(Q)=\E_D[g(X)Q_X(p)R_j(p,Y)] \] and
 \begin{equation}
 \MCE_D^\Gamma(Q;\cG)=\max_{g\in\cG}\sum_{p\in S}\sum_{j=1}^k|B_{g,p,j}(Q)|.
 \label{eq:mce}
 \end{equation}
 A deterministic predictor $h:X\to S$ is identified with $Q_x=\delta_{h(x)}$. The metric in \eqref{eq:mce} conditions every coordinate on the full vector $p$. It is not a sum of $k$ scalar multicalibration problems.
 
-For $s\in\{\pm1\}^{S\times[k]}$, let
-\[
-\Phi_{g,s}(Q)=\E_D\!\left[g(X)\sum_{p\in S}Q_X(p)\sum_{j=1}^k s_{p,j}R_j(p,Y)\right].
-\]
-The elementary signed dual is
+For $s\in\{\pm1\}^{S\times[k]}$, let \[ \Phi_{g,s}(Q)=\E_D\!\left[g(X)\sum_{p\in S}Q_X(p)\sum_{j=1}^k s_{p,j}R_j(p,Y)\right]. \] The elementary signed dual is
 \begin{equation}
 \MCE_D^\Gamma(Q;\cG)=\max_{g\in\cG}\max_{s\in\{\pm1\}^{S\times[k]}}\Phi_{g,s}(Q).
 \label{eq:signed}
 \end{equation}
 
 \begin{assumption}[Upper-bound regularity]\label{ass:regularity}
-The law class $\cM$ is a convex compact subset of a topological vector space of finite signed measures on $\mathcal Y$. There are constants $B,C_{\rm grid}<\infty$ such that $\|R(p,y)\|_\infty\le B$ and the following hold. For every $\gamma\in(0,1)$ there is a grid $\cP_\gamma\subset\cP$ with
-\[
-|\cP_\gamma|\le C_{\rm grid}\gamma^{-k},\qquad
-\sup_{\mu\in\cM}\min_{p\in\cP_\gamma}\|\bar R(p,\mu)\|_\infty\le C_{\rm grid}\gamma.
-\]
-For fixed $p,j$, the map $\mu\mapsto\bar R_j(p,\mu)$ is affine and continuous on $\cM$.
+The law class $\cM$ is a convex compact subset of a topological vector space of finite signed measures on $\mathcal Y$. There are constants $B,C_{\rm grid}<\infty$ such that $\|R(p,y)\|_\infty\le B$ and the following hold. For every $\gamma\in(0,1)$ there is a grid $\cP_\gamma\subset\cP$ with \[ |\cP_\gamma|\le C_{\rm grid}\gamma^{-k},\qquad \sup_{\mu\in\cM}\min_{p\in\cP_\gamma}\|\bar R(p,\mu)\|_\infty\le C_{\rm grid}\gamma. \] For fixed $p,j$, the map $\mu\mapsto\bar R_j(p,\mu)$ is affine and continuous on $\cM$.
 \end{assumption}
 
 Assumption~\ref{ass:regularity} is exactly the regularity used for the randomized upper bound of \citet{lu2026multilevel}. In particular, we add no smoothness or metric structure on the outcome space.
@@ -143,11 +117,7 @@ n\le C\frac{L}{\varepsilon^2}\log\!\left(\frac{L}{\varepsilon}\right),
 L=\varepsilon^{-k}+\log(|\cG|+1)+10,
 \label{eq:mainrate}
 \end{equation}
-i.i.d. samples outputs a deterministic predictor $h:X\to\cP_{c\varepsilon}$ satisfying
-\[
-\Prb\!\left(\MCE_D^\Gamma(h;\cG)\le\varepsilon\right)\ge\frac23.
-\]
-The probability is over the sample and training randomness. Once returned, $h$ uses no prediction-time randomness. The result is information-theoretic. It is oracle-efficient given additive solutions to the confidence-section feasibility and minimax problems defined below.
+i.i.d. samples outputs a deterministic predictor $h:X\to\cP_{c\varepsilon}$ satisfying \[ \Prb\!\left(\MCE_D^\Gamma(h;\cG)\le\varepsilon\right)\ge\frac23. \] The probability is over the sample and training randomness. Once returned, $h$ uses no prediction-time randomness. The result is information-theoretic. It is oracle-efficient given additive solutions to the confidence-section feasibility and minimax problems defined below.
 \end{theorem}
 
 The lower bounds of \citet{lu2026multilevel} allow arbitrary randomized learners and predictors. Combining them with Theorem~\ref{thm:main} gives a deterministic phase diagram.
@@ -158,16 +128,7 @@ For every fixed $\kappa>0$, deterministic-output multicalibration with $|\cG|\le
 
 \section{Confidence laws and compatible support}
 
-Split the data into a confidence sample $S_0$, an online-learning sample $S_1$, and a partition sample $S_2$. Fix $\gamma=c\varepsilon$ and abbreviate $S=\cP_\gamma$. Let $N_x$ be the number of occurrences of context $x$ in $S_0$. If $N_x\ge2$, define the empirical grid residuals
-\[
-\widehat R_x(p)=\frac1{N_x}\sum_{i:X_i=x}R(p,Y_i),\qquad p\in S,
-\]
-and set
-\[
-\widetilde r_x=\min\left\{2B,B\sqrt{\frac{2J}{N_x}}\right\},\qquad
-\widetilde\cC_x=\left\{\nu\in\cM:\max_{p\in S}\|\bar R(p,\nu)-\widehat R_x(p)\|_\infty\le\widetilde r_x\right\}.
-\]
-If this section is nonempty, set $(r_x,\cC_x)=(\widetilde r_x,\widetilde\cC_x)$. For an empty section or $N_x\le1$, set $(r_x,\cC_x)=(2B,\cM)$. Thus only repeatedly observed contexts receive informative law-valued hints. The section records exactly the residual moments that appear in the calibration objective.
+Split the data into a confidence sample $S_0$, an online-learning sample $S_1$, and a partition sample $S_2$. Fix $\gamma=c\varepsilon$ and abbreviate $S=\cP_\gamma$. Let $N_x$ be the number of occurrences of context $x$ in $S_0$. If $N_x\ge2$, define the empirical grid residuals \[ \widehat R_x(p)=\frac1{N_x}\sum_{i:X_i=x}R(p,Y_i),\qquad p\in S, \] and set \[ \widetilde r_x=\min\left\{2B,B\sqrt{\frac{2J}{N_x}}\right\},\qquad \widetilde\cC_x=\left\{\nu\in\cM:\max_{p\in S}\|\bar R(p,\nu)-\widehat R_x(p)\|_\infty\le\widetilde r_x\right\}. \] If this section is nonempty, set $(r_x,\cC_x)=(\widetilde r_x,\widetilde\cC_x)$. For an empty section or $N_x\le1$, set $(r_x,\cC_x)=(2B,\cM)$. Thus only repeatedly observed contexts receive informative law-valued hints. The section records exactly the residual moments that appear in the calibration objective.
 
 Define an allowed action set $A_x\subseteq S$. If $r_x\le\gamma$, choose any $\nu_x^0\in\cC_x$, choose a grid point $p_x^0$ with $\|\bar R(p_x^0,\nu_x^0)\|_\infty\le C_{\rm grid}\gamma$, and set
 \begin{equation}
@@ -181,11 +142,7 @@ A_x=\left\{p\in S:\inf_{\nu\in\cC_x}\|\bar R(p,\nu)\|_\infty\le C_{\rm grid}\gam
 \end{equation}
 
 \begin{lemma}[Compatible support]\label{lem:support}
-For every $x$ and every $\mu\in\cC_x$, there is a prediction $p\in A_x$ with $\|\bar R(p,\mu)\|_\infty\le C_0\gamma$. If $r_x>\gamma$, then every $p\in A_x$ satisfies
-\[
-\|\bar R(p,\mu)\|_\infty\le C_1r_x
-\]
-for every $\mu\in\cC_x$. The constants depend only on $C_{\rm grid}$.
+For every $x$ and every $\mu\in\cC_x$, there is a prediction $p\in A_x$ with $\|\bar R(p,\mu)\|_\infty\le C_0\gamma$. If $r_x>\gamma$, then every $p\in A_x$ satisfies \[ \|\bar R(p,\mu)\|_\infty\le C_1r_x \] for every $\mu\in\cC_x$. The constants depend only on $C_{\rm grid}$.
 \end{lemma}
 
 Every pair $\mu,\nu\in\cC_x$ satisfies $\|\bar R(p,\mu)-\bar R(p,\nu)\|_\infty\le2r_x$ for all $p\in S$. The same bound holds in a fallback section because every expected residual lies in $[-B,B]$. For a coarse section, the grid point that approximates $\mu$ belongs to $A_x$ by definition. Conversely, any allowed point has a witness $\nu\in\cC_x$, so its residual under $\mu$ is at most $C_{\rm grid}\gamma+2r_x=O(r_x)$. For a fine section, its one representative prediction has residual at most $C_{\rm grid}\gamma+2r_x=O(\gamma)$ for every law in the section. This proves the lemma.
@@ -193,11 +150,7 @@ Every pair $\mu,\nu\in\cC_x$ satisfies $\|\bar R(p,\mu)-\bar R(p,\nu)\|_\infty\l
 The next proposition records the two statistical facts supplied by $S_0$. Here $p_x=D_X(\{x\})$ and $\At(D_X)$ is the at most countable atom set.
 
 \begin{proposition}[Confidence and radius budget]\label{prop:confidence}
-Let
-\[
-M=|\cP_\gamma|,\qquad L=\log|\cG|+kM\log2+10,
-\]
-take $J=C\log(L/\varepsilon)$, and use $n_0=CLJ/\varepsilon^2$ confidence samples. With probability at least $0.95$, the true conditional law satisfies $\mu_x\in\cC_x$ almost surely and
+Let \[ M=|\cP_\gamma|,\qquad L=\log|\cG|+kM\log2+10, \] take $J=C\log(L/\varepsilon)$, and use $n_0=CLJ/\varepsilon^2$ confidence samples. With probability at least $0.95$, the true conditional law satisfies $\mu_x\in\cC_x$ almost surely and
 \begin{equation}
 \sum_{x\in\At(D_X)}p_x^2r_x^2\le C\frac{\varepsilon^2}{L}.
 \label{eq:radiusbudget}
@@ -218,11 +171,7 @@ Condition on valid confidence laws. Let $\Sigma=\{\pm1\}^{S\times[k]}$ and let $
 For a fixed $\nu$, Lemma~\ref{lem:support} supplies a point mass whose residual coordinates are all $O(\gamma)$. Its objective is at most $O(k\gamma)$. The objective is affine in both $q$ and $\nu$, while $\simplex(A_x)$ and $\cC_x$ are convex and compact. Sion's minimax theorem \citep{sion1958minimax} therefore gives the same upper bound when the learner moves first. Standard exponential-weights regret and online-to-batch conversion now apply without changing the action support.
 
 \begin{lemma}[Constrained randomized learner]\label{lem:randomized}
-Using $T=CL/\varepsilon^2$ samples in $S_1$, the averaged predictor
-\[
-Q_x=\frac1T\sum_{t=1}^Tq_t(x)
-\]
-satisfies $\supp(Q_x)\subseteq A_x$ for every $x$ and, with probability at least $0.95$,
+Using $T=CL/\varepsilon^2$ samples in $S_1$, the averaged predictor \[ Q_x=\frac1T\sum_{t=1}^Tq_t(x) \] satisfies $\supp(Q_x)\subseteq A_x$ for every $x$ and, with probability at least $0.95$,
 \begin{equation}
 \MCE_D^\Gamma(Q;\cG)\le C\left(k\gamma+kB\sqrt{\frac{L}{T}}\right)\le C'\varepsilon.
 \label{eq:randomizedbound}
@@ -258,11 +207,7 @@ B^2\sum_{C\in\Pi_{\rm unobs}}D_X(C)^2\right)}.
 In particular, the additive error is $O(\varepsilon)$.
 \end{lemma}
 
-To see the mechanism, fix $(g,s)\in\mathcal T$ and replace each residual by its conditional expectation given $X$. The change in $\Phi_{g,s}$ is a sum of independent, mean-zero variables $Z_{g,s,C}$, one per cell. Consider an observed singleton $\{x\}$. If $r_x\le\gamma$, then $A_x$ is a singleton, so $Z_{g,s,\{x\}}=0$. If $r_x>\gamma$, Lemma~\ref{lem:support} bounds the range length by $Ckp_xr_x$. On an unobserved cell, residual boundedness gives range length at most $2kB D_X(C)$. Hoeffding's inequality followed by a union bound over
-\[
-|\mathcal T|=|\cG|2^{k|S|}
-\]
-proves \eqref{eq:purification}. Maximizing the preserved signed objectives and applying \eqref{eq:signed} gives the claimed ECE bound.
+To see the mechanism, fix $(g,s)\in\mathcal T$ and replace each residual by its conditional expectation given $X$. The change in $\Phi_{g,s}$ is a sum of independent, mean-zero variables $Z_{g,s,C}$, one per cell. Consider an observed singleton $\{x\}$. If $r_x\le\gamma$, then $A_x$ is a singleton, so $Z_{g,s,\{x\}}=0$. If $r_x>\gamma$, Lemma~\ref{lem:support} bounds the range length by $Ckp_xr_x$. On an unobserved cell, residual boundedness gives range length at most $2kB D_X(C)$. Hoeffding's inequality followed by a union bound over \[ |\mathcal T|=|\cG|2^{k|S|} \] proves \eqref{eq:purification}. Maximizing the preserved signed objectives and applying \eqref{eq:signed} gives the claimed ECE bound.
 
 This argument explains why singleton support cannot be replaced by an ordinary $O(\gamma)$ thickening. Such a thickening contributes $\gamma^2\sum_xp_x^2$ to the squared ranges. A single atom can make this term $\gamma^2$. Simultaneous control of the signed tests then costs $\gamma\sqrt{L}$, where $L\asymp\gamma^{-k}$, which does not vanish at the desired scale for $k\ge2$.
 
@@ -271,23 +216,13 @@ This argument explains why singleton support cannot be replaced by an ordinary $
 \section{Canonical properties and related work}
 
 \paragraph{Mean and mean absolute deviation.} Here $k=2$, $\cM$ is the class of all laws on $[0,1]$, and
-\[
-R_1(m,y)=m-y,\qquad R_2(m,d,y)=d-|y-m|.
-\]
-The residuals are bounded and uniformly Lipschitz in the prediction. The compactness, continuity, and grid conditions were verified by \citet{lu2026multilevel}. Theorem~\ref{thm:main} gives a deterministic $\widetilde O(\varepsilon^{-4})$ upper bound.
+\[ R_1(m,y)=m-y,\qquad R_2(m,d,y)=d-|y-m|. \] The residuals are bounded and uniformly Lipschitz in the prediction. The compactness, continuity, and grid conditions were verified by \citet{lu2026multilevel}. Theorem~\ref{thm:main} gives a deterministic $\widetilde O(\varepsilon^{-4})$ upper bound.
 
 \paragraph{Mean, variance, and skewness.} On $\{0,1/3,2/3,1\}$, restrict to laws assigning mass at least $h>0$ to every point. The residuals are
-\[
-R_1=m-y,\quad R_2=\sigma^2-(y-m)^2,\quad
-R_3=\gamma(\sigma^2)^{3/2}-(y-m)^3.
-\]
-The variance is bounded below by $h^2$, so all residuals are bounded on the prediction rectangle. The $k=3$ theorem gives $\widetilde O(\varepsilon^{-5})$ samples.
+\[ R_1=m-y,\quad R_2=\sigma^2-(y-m)^2,\quad R_3=\gamma(\sigma^2)^{3/2}-(y-m)^3. \] The variance is bounded below by $h^2$, so all residuals are bounded on the prediction rectangle. The $k=3$ theorem gives $\widetilde O(\varepsilon^{-5})$ samples.
 
 \paragraph{Quantile and CVaR.} Fix $\tau\in(0,1)$ and laws with densities $h\le f\le H$ on $[0,1]$. With
-\[
-L_\tau(q,y)=q+\frac{(y-q)_+}{1-\tau},
-\]
-the residuals are $R_1(q,y)=\1\{y\le q\}-\tau$ and $R_2(q,r,y)=r-L_\tau(q,y)$. The density upper bound gives the needed prediction-grid approximation and continuity. We obtain $\widetilde O(\varepsilon^{-4})$ deterministic sample complexity.
+\[ L_\tau(q,y)=q+\frac{(y-q)_+}{1-\tau}, \] the residuals are $R_1(q,y)=\1\{y\le q\}-\tau$ and $R_2(q,r,y)=r-L_\tau(q,y)$. The density upper bound gives the needed prediction-grid approximation and continuity. We obtain $\widetilde O(\varepsilon^{-4})$ deterministic sample complexity.
 
 \paragraph{Positioning.} Property multicalibration and conditional elicitability were developed by \citet{noarovroth2023scope}. Earlier deterministic batch algorithms calibrate means and conditional moments under different bucketed or squared-error notions \citep{jung2021moment}. Online multivalid learning supplies the minimax template behind randomized calibration algorithms \citep{gupta2022online}. Recent work establishes sharp ECE sample complexity for scalar properties \citep{collina2026sample} and high-dimensional or multilevel predictions \citep{noarov2025highdim,lu2026multilevel}. Smoothed elicitation for discrete multiclass reports addresses an orthogonal property-design question \citep{finocchiaro2026smoothed}. Our question is specifically whether a learner attaining the sharp full-vector ECE rate can return one fixed prediction per context. The scalar answer of \citet{noarovroth2026deterministic} uses conditional-mean intervals. Our law-valued support lemma and vector-residual purification are needed to answer it for dependent properties.
 
@@ -306,98 +241,35 @@ Two boundaries remain. First, the theorem is information-theoretic unless the le
 
 \subsection{Compactness of confidence sections}
 
-For fixed empirical residuals, $\widetilde\cC_x$ is the intersection of $\cM$ with the finitely many constraints
-\[
--r_x\le \bar R_j(p,\nu)-\widehat R_{x,j}(p)\le r_x,
-\qquad p\in S,\ j\in[k].
-\]
-Each constraint is closed and convex because $\nu\mapsto\bar R_j(p,\nu)$ is continuous and affine. Assumption~\ref{ass:regularity} therefore makes every nonempty confidence section compact and convex. This is the only topology used by the confidence construction.
+For fixed empirical residuals, $\widetilde\cC_x$ is the intersection of $\cM$ with the finitely many constraints \[ -r_x\le \bar R_j(p,\nu)-\widehat R_{x,j}(p)\le r_x, \qquad p\in S,\ j\in[k]. \] Each constraint is closed and convex because $\nu\mapsto\bar R_j(p,\nu)$ is continuous and affine. Assumption~\ref{ass:regularity} therefore makes every nonempty confidence section compact and convex. This is the only topology used by the confidence construction.
 
 Only the finitely many contexts observed in $S_0$ have nondefault confidence sets. On the unobserved region, $\cC_x=\cM$ and $A_x$ is constant. At an online round, the maximized objective in \eqref{eq:minimax} is a continuous convex function of the finite vector $q$. A lexicographically tie-broken minimizer is measurable in the group values $(g(x))_{g\in\cG}$. Finite modifications at observed contexts preserve measurability.
 
 \subsection{Simultaneous residual coverage}
 
-Condition on the contexts in $S_0$. For every context with $N_x\ge2$, its associated outcomes are independent draws from $\mu_x$. For fixed $p\in S$ and $j\in[k]$, Hoeffding's inequality gives
-\[
-\Prb\!\left(\left|\widehat R_{x,j}(p)-\bar R_j(p,\mu_x)\right|>B\sqrt{\frac{2J}{N_x}}\ \middle|\ X_1,\ldots,X_{n_0}\right)\le2e^{-J}.
-\]
-There are at most $n_0/2$ repeated contexts and $k|S|$ scalar residuals at each. Choosing $J\ge\log(100n_0k|S|)+O(1)$ gives simultaneous coverage with probability at least $0.99$. Since $|S|\le L$, the choices $n_0=CLJ/\varepsilon^2$ and $J=C'\log(L/\varepsilon)$ satisfy this inequality after increasing $C'$.
+Condition on the contexts in $S_0$. For every context with $N_x\ge2$, its associated outcomes are independent draws from $\mu_x$. For fixed $p\in S$ and $j\in[k]$, Hoeffding's inequality gives \[ \Prb\!\left(\left|\widehat R_{x,j}(p)-\bar R_j(p,\mu_x)\right|>B\sqrt{\frac{2J}{N_x}}\ \middle|\ X_1,\ldots,X_{n_0}\right)\le2e^{-J}. \] There are at most $n_0/2$ repeated contexts and $k|S|$ scalar residuals at each. Choosing $J\ge\log(100n_0k|S|)+O(1)$ gives simultaneous coverage with probability at least $0.99$. Since $|S|\le L$, the choices $n_0=CLJ/\varepsilon^2$ and $J=C'\log(L/\varepsilon)$ satisfy this inequality after increasing $C'$.
 
 A nonatom appears twice with probability zero. Contexts seen at most once and all unobserved contexts receive $\cM$, so coverage holds almost surely there. On the simultaneous residual event, every empirical section is nonempty because it contains $\mu_x$. The fallback for empty sections is therefore irrelevant on the success event.
 
 \subsection{Atomic radius budget}
 
-On the simultaneous coverage event, no empirical section containing a true law is empty, so the actual radius equals its displayed pre-fallback value. Fix an atom of mass $p$ and let $N\sim\operatorname{Bin}(n_0,p)$. Define the pre-fallback radius $r(N)=2B$ for $N\le1$ and $r(N)^2\le\min\{4B^2,2B^2J/N\}$ otherwise. If $n_0p\le2J$, then
-\[
-p^2\E r(N)^2\le4B^2p^2\le\frac{8B^2J}{n_0}p.
-\]
-If $n_0p>2J$, split on $N\ge n_0p/2$. On this event, $r(N)^2\le4B^2J/(n_0p)$. A Chernoff bound controls the complement by $e^{-n_0p/8}$. Therefore
-\[
-p^2\E r(N)^2
-\le \frac{4B^2J}{n_0}p+4B^2p^2e^{-n_0p/8}
-\le C\frac{B^2J}{n_0}p.
-\]
-Summing over the countable atom set gives expectation at most $CB^2J/n_0$. Markov's inequality and the choice $n_0=CLJ/\varepsilon^2$ prove \eqref{eq:radiusbudget} with probability at least $0.99$ after increasing the constant, which may depend on $B$. Combining this event with simultaneous coverage proves Proposition~\ref{prop:confidence}.
+On the simultaneous coverage event, no empirical section containing a true law is empty, so the actual radius equals its displayed pre-fallback value. Fix an atom of mass $p$ and let $N\sim\operatorname{Bin}(n_0,p)$. Define the pre-fallback radius $r(N)=2B$ for $N\le1$ and $r(N)^2\le\min\{4B^2,2B^2J/N\}$ otherwise. If $n_0p\le2J$, then \[ p^2\E r(N)^2\le4B^2p^2\le\frac{8B^2J}{n_0}p. \] If $n_0p>2J$, split on $N\ge n_0p/2$. On this event, $r(N)^2\le4B^2J/(n_0p)$. A Chernoff bound controls the complement by $e^{-n_0p/8}$. Therefore \[ p^2\E r(N)^2 \le \frac{4B^2J}{n_0}p+4B^2p^2e^{-n_0p/8} \le C\frac{B^2J}{n_0}p. \] Summing over the countable atom set gives expectation at most $CB^2J/n_0$. Markov's inequality and the choice $n_0=CLJ/\varepsilon^2$ prove \eqref{eq:radiusbudget} with probability at least $0.99$ after increasing the constant, which may depend on $B$. Combining this event with simultaneous coverage proves Proposition~\ref{prop:confidence}.
 
 \section{Constrained online learning}\label{app:online}
 
-Let $N_{\rm test}=|\cG|2^{k|S|}$. For each test $a=(g,s)$, define the round gain
-\[
-Z_t(a)=g(X_t)\E_{p\sim q_t(X_t)}\sum_{j=1}^ks_{p,j}R_j(p,Y_t).
-\]
-It lies in $[-kB,kB]$. Exponential weights with learning rate of order $\sqrt{\log N_{\rm test}/(Tk^2B^2)}$ gives
-\[
-\max_a\sum_{t=1}^TZ_t(a)
-\le \sum_{t=1}^T\sum_aw_t(a)Z_t(a)+CkB\sqrt{T\log N_{\rm test}}
-\]
-up to the usual martingale deviation.
+Let $N_{\rm test}=|\cG|2^{k|S|}$. For each test $a=(g,s)$, define the round gain \[ Z_t(a)=g(X_t)\E_{p\sim q_t(X_t)}\sum_{j=1}^ks_{p,j}R_j(p,Y_t). \] It lies in $[-kB,kB]$. Exponential weights with learning rate of order $\sqrt{\log N_{\rm test}/(Tk^2B^2)}$ gives \[ \max_a\sum_{t=1}^TZ_t(a) \le \sum_{t=1}^T\sum_aw_t(a)Z_t(a)+CkB\sqrt{T\log N_{\rm test}} \] up to the usual martingale deviation.
 
-Condition on the past and $X_t=x$. For fixed $\nu\in\cC_x$, Lemma~\ref{lem:support} supplies $p_\nu\in A_x$ with $\|\bar R(p_\nu,\nu)\|_\infty\le C_0\gamma$. Hence
-\[
-\min_{q\in\simplex(A_x)}\sum_aw_t(a)g_a(x)\E_{p\sim q}\sum_js^a_{p,j}\bar R_j(p,\nu)
-\le C_0k\gamma.
-\]
-The sets $\simplex(A_x)$ and $\cC_x$ are convex and compact, and the objective is continuous and affine in each argument. Sion's theorem interchanges minimum and maximum, proving that the conditional expected weighted gain is at most $C_0k\gamma$.
+Condition on the past and $X_t=x$. For fixed $\nu\in\cC_x$, Lemma~\ref{lem:support} supplies $p_\nu\in A_x$ with $\|\bar R(p_\nu,\nu)\|_\infty\le C_0\gamma$. Hence \[ \min_{q\in\simplex(A_x)}\sum_aw_t(a)g_a(x)\E_{p\sim q}\sum_js^a_{p,j}\bar R_j(p,\nu) \le C_0k\gamma. \] The sets $\simplex(A_x)$ and $\cC_x$ are convex and compact, and the objective is continuous and affine in each argument. Sion's theorem interchanges minimum and maximum, proving that the conditional expected weighted gain is at most $C_0k\gamma$.
 
-After summing, martingale concentration gives the empirical signed objective bound. For i.i.d. data, the averaged predictor $Q=T^{-1}\sum_tq_t$ has population signed objectives equal to conditional expectations of the online rules. A second union bound over the same tests controls the online-to-batch martingales. Dividing by $T$ proves
-\[
-\max_{g,s}\Phi_{g,s}(Q)
-\le C_0k\gamma+CkB\sqrt{\frac{\log N_{\rm test}+10}{T}}.
-\]
-Equation~\eqref{eq:signed} proves Lemma~\ref{lem:randomized}.
+After summing, martingale concentration gives the empirical signed objective bound. For i.i.d. data, the averaged predictor $Q=T^{-1}\sum_tq_t$ has population signed objectives equal to conditional expectations of the online rules. A second union bound over the same tests controls the online-to-batch martingales. Dividing by $T$ proves \[ \max_{g,s}\Phi_{g,s}(Q) \le C_0k\gamma+CkB\sqrt{\frac{\log N_{\rm test}+10}{T}}. \] Equation~\eqref{eq:signed} proves Lemma~\ref{lem:randomized}.
 
 \section{Partition and purification details}\label{app:purification}
 
 Every standard Borel space admits a Borel injection into $[0,1]$. Pull back the usual order and use it to form the cells. Let $O_0$ be the finite set observed in $S_0$ and $U_0=X\setminus O_0$. Sort the distinct contexts $W_1,\ldots,W_m$ from $S_2$. Intersect $U_0$ with the open gaps, the sampled singleton points, and the two exterior intervals.
 
-Conditional on $S_0$, let $\nu(A)=D_X(A\cap U_0)$. The sum $\sum_C\nu(C)^2$ is the probability that two independent draws fall in the same cell. For two distinct draws, this can happen only if none of the $m$ partition points falls between them. Exchangeability among the $m+2$ points bounds this probability by $2/(m+2)$. Equal draws contribute the atoms left unobserved by $S_0$. Thus
-\[
-\E\sum_{C\in\Pi_{\rm unobs}}D_X(C)^2
-\le \sum_{x\in\At(D_X)}p_x^2(1-p_x)^{n_0}+\frac2{m+2}
-\le \frac{C}{n_0}+\frac2{m+2}.
-\]
-Markov's inequality with $m=CL/\varepsilon^2$ proves \eqref{eq:cellbudget} at constant confidence.
+Conditional on $S_0$, let $\nu(A)=D_X(A\cap U_0)$. The sum $\sum_C\nu(C)^2$ is the probability that two independent draws fall in the same cell. For two distinct draws, this can happen only if none of the $m$ partition points falls between them. Exchangeability among the $m+2$ points bounds this probability by $2/(m+2)$. Equal draws contribute the atoms left unobserved by $S_0$. Thus \[ \E\sum_{C\in\Pi_{\rm unobs}}D_X(C)^2 \le \sum_{x\in\At(D_X)}p_x^2(1-p_x)^{n_0}+\frac2{m+2} \le \frac{C}{n_0}+\frac2{m+2}. \] Markov's inequality with $m=CL/\varepsilon^2$ proves \eqref{eq:cellbudget} at constant confidence.
 
-For completeness, fix $(g,s)$ and define
-\[
-\psi_{g,s}(x,p)=g(x)\sum_{j=1}^ks_{p,j}\bar R_j(p,\mu_x).
-\]
-For each cell $C$, let
-\[
-Z_{g,s,C}=\int_C\left(\psi_{g,s}(x,F_x(U_C))-
-\E_{p\sim Q_x}\psi_{g,s}(x,p)\right)dD_X(x).
-\]
-Fubini's theorem shows that each variable has mean zero. Different cells use independent seeds. On an observed atomic singleton with $r_x\le\gamma$, $Q_x$ is a point mass and the variable vanishes. On a coarse observed atom, Lemma~\ref{lem:support} gives range length at most $Ckp_xr_x$. A nonatom singleton has zero mass. On an unobserved cell, the range length is at most $2kBD_X(C)$. Conditional Hoeffding therefore gives
-\[
-\Prb\!\left(\left|\sum_CZ_{g,s,C}\right|>t\right)
-\le2\exp\!\left(-\frac{ct^2}{k^2V_\Pi}\right),
-\]
-where
-\[
-V_\Pi=\sum_{x\in\At(D_X)}p_x^2r_x^2+
-B^2\sum_{C\in\Pi_{\rm unobs}}D_X(C)^2.
-\]
-A union bound over $|\cG|2^{k|S|}$ choices proves Lemma~\ref{lem:purification}.
+For completeness, fix $(g,s)$ and define \[ \psi_{g,s}(x,p)=g(x)\sum_{j=1}^ks_{p,j}\bar R_j(p,\mu_x). \] For each cell $C$, let \[ Z_{g,s,C}=\int_C\left(\psi_{g,s}(x,F_x(U_C))- \E_{p\sim Q_x}\psi_{g,s}(x,p)\right)dD_X(x). \] Fubini's theorem shows that each variable has mean zero. Different cells use independent seeds. On an observed atomic singleton with $r_x\le\gamma$, $Q_x$ is a point mass and the variable vanishes. On a coarse observed atom, Lemma~\ref{lem:support} gives range length at most $Ckp_xr_x$. A nonatom singleton has zero mass. On an unobserved cell, the range length is at most $2kBD_X(C)$. Conditional Hoeffding therefore gives \[ \Prb\!\left(\left|\sum_CZ_{g,s,C}\right|>t\right) \le2\exp\!\left(-\frac{ct^2}{k^2V_\Pi}\right), \] where \[ V_\Pi=\sum_{x\in\At(D_X)}p_x^2r_x^2+ B^2\sum_{C\in\Pi_{\rm unobs}}D_X(C)^2. \] A union bound over $|\cG|2^{k|S|}$ choices proves Lemma~\ref{lem:purification}.
 
 \section{Canonical regularity checks}\label{app:canonical}
 
