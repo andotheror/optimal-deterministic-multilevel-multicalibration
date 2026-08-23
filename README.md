@@ -21,5 +21,6 @@ optimal, deterministic, multilevel, multicalibration, asks, predictor, calibrate
 
 ## Files
 
+- `main_2026-08-13.pdf`, the paper as first published, with its OpenTimestamps proof `main_2026-08-13.pdf.ots`.
 - source: `iclr2027_conference.bst`, `iclr2027_conference.sty`, `main_2026-08-13.tex`, `references.bib`.
-- also: `main_2026-08-13.bbl`, `main_2026-08-13.pdf`.
+- also: `main_2026-08-13.bbl`.
